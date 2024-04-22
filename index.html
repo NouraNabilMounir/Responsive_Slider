@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Slider</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <style>
+    body {
+      padding: 20px;
+    }
+    .slide_group {
+      min-height: 200px;
+      overflow: hidden;
+      display: flex;
+      flex-wrap: nowrap;
+      background-color: aqua;
+    }
+    .slide {
+      height: 100%;
+      /* display: block; */
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .slide {
+      display: none; /* Initially hide all slides */
+    }
+    .slide.active {
+      display: block; /* Show slides with 'active' class */
+    }
+    .slide1 { background-color: gray; }
+    .slide2 { background-color: green; }
+    .slide3 { background-color: rgb(72, 38, 150); }
+    .con {
+      display: flex;
+      flex-wrap: nowrap;
+    }
+    #slideContainer.row {
+      --bs-gutter-x: 0 ;
+    }
+  </style>
+</head>
+<body>
+  <div class="row slide_group" id="slideContainer">
+    <div class="d-flex flex-wrap-nowrap con" id="slideWrapper">
+      <div class="col-12 col-md-12 col-lg-6 slide slide1 active">Slide 1</div>
+      <div class="col-12 col-md-12 col-lg-6 slide slide2 active">Slide 2</div>
+      <div class="col-12 col-md-12 col-lg-6 slide slide3">Slide 3</div>
+      <div class="col-12 col-md-12 col-lg-6 slide slide2">Slide 4</div>
+      <div class="col-12 col-md-12 col-lg-6 slide slide1">Slide 5</div>
+    </div>
+  </div>
+  <a href="#" class="previous_btn">Previous</a>
+  <a href="#" class="next_btn">Next</a>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var slideGroup = document.querySelector('.slide_group');
+      var slides = slideGroup.querySelectorAll('.slide');
+      var currentIndex = 0;
+      var timeout;
+
+      function move(newIndex) {
+        // Remove 'active' class from current slide pairs
+        var currentPairIndex = currentIndex % slides.length;
+        slides[currentPairIndex].classList.remove('active');
+        slides[(currentPairIndex + 1) % slides.length].classList.remove('active');
+
+        // Calculate new index ensuring not to pair the last slide with the first slide
+        if (newIndex < 0) {
+          newIndex = slides.length - 2; // Move back two slides for pairs
+        } else if (newIndex >= slides.length - 1) {
+          newIndex = 0; // Restart from the beginning
+        }
+
+        // Add 'active' class to new slide pair
+        var newPairIndex = newIndex % slides.length;
+        slides[newPairIndex].classList.add('active');
+        slides[(newPairIndex + 1) % slides.length].classList.add('active');
+        currentIndex = newIndex;
+
+        resetTimeout();
+      }
+
+      function next() {
+        move(currentIndex + 1); // Move to the next slide pair
+      }
+
+      function previous() {
+        move(currentIndex - 1); // Move to the previous slide pair
+      }
+
+      function resetTimeout() {
+        clearTimeout(timeout);
+        timeout = setTimeout(next, 4000);
+      }
+
+      document.querySelector('.next_btn').addEventListener('click', next);
+      document.querySelector('.previous_btn').addEventListener('click', previous);
+
+      // Show the initial slide pair
+      slides[currentIndex % slides.length].classList.add('active');
+      slides[(currentIndex + 1) % slides.length].classList.add('active');
+
+      resetTimeout();
+    });
+  </script>
+</body>
+</html>
